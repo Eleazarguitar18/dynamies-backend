@@ -2,10 +2,9 @@ import {
   IsString,
   IsEmail,
   IsOptional,
-  IsBoolean,
-  IsNumber,
   IsNotEmpty,
 } from 'class-validator';
+import { Persona } from 'src/persona/entities/persona.entity';
 export class CreateUsuarioDto {
   @IsString()
   @IsOptional()
@@ -19,7 +18,6 @@ export class CreateUsuarioDto {
   password: string;
   estado: boolean = true;
 
-  @IsNumber()
   @IsOptional()
-  id_persona?: number;
+  persona?: Persona;
 }

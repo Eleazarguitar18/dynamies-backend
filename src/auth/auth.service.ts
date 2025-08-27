@@ -1,27 +1,69 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { CreateUsuarioDto } from 'src/usuario/dto/create-usuario.dto';
-
+import { PersonaService } from 'src/persona/persona.service';
+import { Repository } from 'typeorm';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
+import { hash } from 'crypto';
 @Injectable()
 export class AuthService {
-  async createUser(createUserDto: CreateUsuarioDto) {
-  const { id_persona, ...userData } = createUserDto;
+  constructor(
+    @InjectRepository(Usuario)
+    private userRepository: Repository<Usuario>,
+    private readonly personaService: PersonaService,
+    private readonly configService: ConfigService,
+  ) {}
+  async create(createAuthDto: CreateAuthDto) {
+    const persona = await this.personaService.create(createAuthDto);
 
-  let persona = null;
-  if (id_persona) {
-    persona = await this.personaRepository.findOneBy({ id: id_persona });
-    if (!persona) throw new NotFoundException('Persona no encontrada');
+    // generaciond de contraseña
+    const password_hash = await this.encriptar_password(
+      createAuthDto.password,
+    );
+    const userDto = {
+      name:
+        createAuthDto.nombres +
+        ' ' +
+        createAuthDto.p_apellido +
+        ' ' +
+        createAuthDto.s_apellido,
+      email: createAuthDto.email,
+      password: password_hash,
+      estado: createAuthDto.estado,
+      persona: persona,
+    };
+
+    const user = this.userRepository.create(userDto);
+    const data = await this.userRepository.save(user);
+    return data;
   }
 
-  const user = this.userRepository.create({
-    ...userData,
-    persona, // asigna la entidad completa, no solo el id
-  });
-
-  return this.userRepository.save(user);
+ async encriptar_password(password: string): Promise<string> {
+  const saltRounds = parseInt(this.configService.get<string>('SALT_ROUNDS') ?? '10', 10);
+  const hash = await bcrypt.hash(password, saltRounds);
+  return hash;
 }
 
+async comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+async login(email: string, password: string): Promise<Usuario | null> {
+  const user = await this.userRepository.findOne({
+    where: { email },
+    relations: ['persona'],
+  });
+  if (!user) {
+    return null;
+  }
+  const isPasswordValid = await this.comparePassword(password, user.password);
+  if (!isPasswordValid) {
+    return null;
+  }
+  return user;
+}
 
   findAll() {
     return `This action returns all auth`;

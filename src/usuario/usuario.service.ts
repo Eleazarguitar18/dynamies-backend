@@ -15,18 +15,18 @@ export class UsuarioService {
   ) {}
 
   
-  async create_old(createUsuarioDto: CreateUsuarioDto) {
-    let persona = null;
-    if (createUsuarioDto.id_persona) {
-      const persona = await this.personaService.findOne(
-        createUsuarioDto.id_persona,
-      );
-      if (!persona) throw new Error('Persona no encontrada');
-    }
-    const usuario = this.usuariosRepository.create(createUsuarioDto);
-    const usuarioData = await this.usuariosRepository.save(usuario);
-    return usuarioData;
-  }
+  // async create_old(createUsuarioDto: CreateUsuarioDto) {
+  //   let persona = null;
+  //   if (createUsuarioDto.id_persona) {
+  //     const persona = await this.personaService.findOne(
+  //       createUsuarioDto.id_persona,
+  //     );
+  //     if (!persona) throw new Error('Persona no encontrada');
+  //   }
+  //   const usuario = this.usuariosRepository.create(createUsuarioDto);
+  //   const usuarioData = await this.usuariosRepository.save(usuario);
+  //   return usuarioData;
+  // }
 
   async findAll() {
     const data = await this.usuariosRepository.find();
@@ -37,9 +37,11 @@ export class UsuarioService {
   }
 
   findOne(id: number) {
+    
     return `This action returns a #${id} usuario`;
   }
 
+  // updates
   update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
     return `This action updates a #${id} usuario`;
   }

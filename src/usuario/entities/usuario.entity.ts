@@ -11,7 +11,7 @@ import {
 import { Persona } from '../../persona/entities/persona.entity';
 
 @Entity({ name: 'user' })
-export class Usuario{
+export class Usuario {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,10 +23,6 @@ export class Usuario{
 
   @Column()
   password: string;
-
-  @OneToOne(() => Persona, { eager: true })
-  @JoinColumn({ name: 'id_persona' })
-  persona: Persona;
 
   @Column({ default: true })
   estado: boolean;
@@ -42,4 +38,8 @@ export class Usuario{
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+  
+  @OneToOne(() => Persona, { eager: true })
+  @JoinColumn({ name: 'id_persona' })
+  persona: Persona;
 }

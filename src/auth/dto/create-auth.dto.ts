@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from 'class-validator';
+import { Persona } from 'src/persona/entities/persona.entity';
 export class CreateAuthDto {
   @IsString()
   @IsOptional()
@@ -36,6 +37,6 @@ export class CreateAuthDto {
   @IsString()
   @IsNotEmpty()
   genero: string;
-
-  id_persona?: number
+  // @IsOptional()
+  // persona?: Persona;
 }
