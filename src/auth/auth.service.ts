@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { hash } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/SingInDto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,14 +17,13 @@ export class AuthService {
     private userRepository: Repository<Usuario>,
     private readonly personaService: PersonaService,
     private readonly configService: ConfigService,
+    private jwtService: JwtService,
   ) {}
   async create(createAuthDto: CreateAuthDto) {
     const persona = await this.personaService.create(createAuthDto);
 
     // generaciond de contraseña
-    const password_hash = await this.encriptar_password(
-      createAuthDto.password,
-    );
+    const password_hash = await this.encriptar_password(createAuthDto.password);
     const userDto = {
       name:
         createAuthDto.nombres +
@@ -41,29 +42,37 @@ export class AuthService {
     return data;
   }
 
- async encriptar_password(password: string): Promise<string> {
-  const saltRounds = parseInt(this.configService.get<string>('SALT_ROUNDS') ?? '10', 10);
-  const hash = await bcrypt.hash(password, saltRounds);
-  return hash;
-}
+  async encriptar_password(password: string): Promise<string> {
+    const saltRounds = parseInt(
+      this.configService.get<string>('SALT_ROUNDS') ?? '10',
+      10,
+    );
+    const hash = await bcrypt.hash(password, saltRounds);
+    return hash;
+  }
 
-async comparePassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
-}
-async login(email: string, password: string): Promise<Usuario | null> {
-  const user = await this.userRepository.findOne({
-    where: { email },
-    relations: ['persona'],
-  });
-  if (!user) {
-    return null;
+  async comparePassword(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
   }
-  const isPasswordValid = await this.comparePassword(password, user.password);
-  if (!isPasswordValid) {
-    return null;
+  async login(email: string, password: string): Promise<SignInDto | null> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['persona'],
+    });
+    if (!user) {
+      return null;
+    }
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      return null;
+    }
+    const payload = { sub: user.id, username: user.name };
+    const access_token = await this.jwtService.signAsync(payload);
+    return {
+      "access_token":access_token,
+      "user":user,
+    };
   }
-  return user;
-}
 
   findAll() {
     return `This action returns all auth`;

@@ -6,6 +6,8 @@ import { PersonaModule } from './persona/persona.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioModule } from './usuario/usuario.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/constants';
 
 @Module({
   imports: [AuthModule, PersonaModule,
@@ -23,6 +25,11 @@ import { UsuarioModule } from './usuario/usuario.module';
         autoLoadEntities: true,
         synchronize: true, // solo desarrollo
       }),
+    }),
+     JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60s' },
     }),
     UsuarioModule,
   ],
