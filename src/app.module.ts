@@ -7,10 +7,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioModule } from './usuario/usuario.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
-
+import { jwtConstants } from './auth/config/constants';
 @Module({
-  imports: [AuthModule, PersonaModule,
+  imports: [
+    AuthModule,
+    PersonaModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -26,9 +27,18 @@ import { jwtConstants } from './auth/constants';
         synchronize: true, // solo desarrollo
       }),
     }),
+    // JwtModule.registerAsync({
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => ({
+    //     secret: config.get<string>('JWT_SECRET'),
+    //     signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN') },
+    //   }),
+    // }),
+
      JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
+      // secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
     UsuarioModule,

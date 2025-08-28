@@ -5,10 +5,18 @@ import { PersonaModule } from 'src/persona/persona.module';
 import { UsuarioModule } from 'src/usuario/usuario.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './config/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Usuario]), PersonaModule, UsuarioModule],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
+  exports: [AuthService]
 })
 export class AuthModule {}
