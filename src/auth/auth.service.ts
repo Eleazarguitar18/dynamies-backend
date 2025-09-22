@@ -10,16 +10,32 @@ import * as bcrypt from 'bcrypt';
 import { hash } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/SingInDto';
+import { Persona } from 'src/persona/entities/persona.entity';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private userRepository: Repository<Usuario>,
+    @InjectRepository(Persona)
+    private personaRepository: Repository<Persona>,
     private readonly personaService: PersonaService,
     private readonly configService: ConfigService,
     private jwtService: JwtService,
   ) {}
   async create(createAuthDto: CreateAuthDto) {
+     const emailUnique= await this.userRepository.findOne({
+      where:{email:createAuthDto.email}
+    });
+    if(emailUnique){
+      throw new UnauthorizedException('El email ya se encuentra registrado');
+    }
+
+    const ciUnique= await this.personaRepository.findOne({
+      where:{ci:createAuthDto.ci}
+    });
+    if(ciUnique){
+      throw new UnauthorizedException('El ci ya se encuentra registrado');
+    }
     const persona = await this.personaService.create(createAuthDto);
 
     // generaciond de contraseña
@@ -36,6 +52,7 @@ export class AuthService {
       estado: createAuthDto.estado,
       persona: persona,
     };
+   
 
     const user = this.userRepository.create(userDto);
     const data = await this.userRepository.save(user);

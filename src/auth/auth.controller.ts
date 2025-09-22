@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Headers,
+  HttpException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -20,7 +21,19 @@ export class AuthController {
   @Public()
   @Post('register')
   create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+    try {
+      return this.authService.create(createAuthDto);
+    } catch (error) {
+      // puedes inspeccionar el error y lanzar un HttpException
+      throw new HttpException(
+        {
+          status: error.status || 500,
+          message: error.message || 'Error al crear la persona',
+          details: error.detail || null, // opcional, por ejemplo para errores de DB
+        },
+        error.status || 500,
+      );
+    }
   }
   @Public()
   @Post('login')

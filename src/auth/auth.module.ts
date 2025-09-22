@@ -7,9 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './config/auth.guard';
+import { Persona } from 'src/persona/entities/persona.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Usuario]), PersonaModule, UsuarioModule],
+  imports: [TypeOrmModule.forFeature([Usuario, Persona]), PersonaModule, UsuarioModule],
   controllers: [AuthController],
   providers: [AuthService,
     {
