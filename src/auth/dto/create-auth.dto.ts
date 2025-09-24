@@ -4,7 +4,6 @@ import {
   IsNotEmpty,
   IsOptional,
 } from 'class-validator';
-import { Persona } from 'src/persona/entities/persona.entity';
 export class CreateAuthDto {
   @IsString()
   @IsOptional()

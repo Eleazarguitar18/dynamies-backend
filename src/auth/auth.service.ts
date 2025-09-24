@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { PersonaService } from 'src/persona/persona.service';
@@ -77,11 +77,11 @@ export class AuthService {
       relations: ['persona'],
     });
     if (!user) {
-      return null;
+      throw new NotFoundException('Usuario no encontrado');
     }
     const isPasswordValid = await this.comparePassword(password, user.password);
     if (!isPasswordValid) {
-      return null;
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
     const payload = { sub: user.id, username: user.name };
     const access_token = await this.jwtService.signAsync(payload, {

@@ -4,12 +4,19 @@ import { UsuarioController } from './usuario.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { PersonaModule } from 'src/persona/persona.module';
+import { Persona } from 'src/persona/entities/persona.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from 'src/auth/config/auth.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Usuario]), PersonaModule],
+  imports: [TypeOrmModule.forFeature([Usuario, Persona]), PersonaModule],
   controllers: [UsuarioController],
   providers: [
-    UsuarioService,    
+    UsuarioService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
   exports: [UsuarioService],
 })
