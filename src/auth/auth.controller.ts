@@ -18,23 +18,23 @@ import { Public } from './config/auth_public';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Public()
-  @Post('register')
-  create(@Body() createAuthDto: CreateAuthDto) {
-    try {
-      return this.authService.create(createAuthDto);
-    } catch (error) {
-      // puedes inspeccionar el error y lanzar un HttpException
-      throw new HttpException(
-        {
-          status: error.status || 500,
-          message: error.message || 'Error al crear la persona',
-          details: error.detail || null, // opcional, por ejemplo para errores de DB
-        },
-        error.status || 500,
-      );
-    }
-  }
+  // @Public()
+  // @Post('register')
+  // create(@Body() createAuthDto: CreateAuthDto) {
+  //   try {
+  //     return this.authService.create(createAuthDto);
+  //   } catch (error) {
+  //     // puedes inspeccionar el error y lanzar un HttpException
+  //     throw new HttpException(
+  //       {
+  //         status: error.status || 500,
+  //         message: error.message || 'Error al crear la persona',
+  //         details: error.detail || null, // opcional, por ejemplo para errores de DB
+  //       },
+  //       error.status || 500,
+  //     );
+  //   }
+  // }
   @Public()
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
