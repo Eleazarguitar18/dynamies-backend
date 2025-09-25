@@ -12,7 +12,7 @@ export class LineasController {
     return await this.lineasService.create(createLineaDto);
   }
 
-  @Get()
+  @Get('listar')
   async findAll() {
     return await this.lineasService.findAll();
   }

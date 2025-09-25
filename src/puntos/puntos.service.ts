@@ -1,19 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePuntoDto } from './dto/create-punto.dto';
 import { UpdatePuntoDto } from './dto/update-punto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Punto } from './entities/punto.entity';
 
 @Injectable()
 export class PuntosService {
-  create(createPuntoDto: CreatePuntoDto) {
-    return 'This action adds a new punto';
+  constructor(
+    @InjectRepository(Punto)
+    private puntosRepository: Repository<Punto>,
+  ) {}
+  async create(createPuntoDto: CreatePuntoDto) {
+    const punto = this.puntosRepository.create(createPuntoDto);
+    return await this.puntosRepository.save(punto);
   }
 
-  findAll() {
-    return `This action returns all puntos`;
+  async findAll() {
+    const data = await this.puntosRepository.find();
+    if (data.length === 0) {
+      throw new NotFoundException(`No existen datos de puntos`);
+    }
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} punto`;
+  async findOne(id: number) {
+    const data = await this.puntosRepository.findOneBy({ id: id });
+    if (!data) {
+      throw new NotFoundException(`No se encontro el registro del punto`);
+    }
+    return data;
   }
 
   update(id: number, updatePuntoDto: UpdatePuntoDto) {

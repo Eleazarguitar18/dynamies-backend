@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PuntosService } from './puntos.service';
 import { CreatePuntoDto } from './dto/create-punto.dto';
 import { UpdatePuntoDto } from './dto/update-punto.dto';
@@ -7,19 +15,19 @@ import { UpdatePuntoDto } from './dto/update-punto.dto';
 export class PuntosController {
   constructor(private readonly puntosService: PuntosService) {}
 
-  @Post()
-  create(@Body() createPuntoDto: CreatePuntoDto) {
-    return this.puntosService.create(createPuntoDto);
+  @Post('create')
+  async create(@Body() createPuntoDto: CreatePuntoDto) {
+    return await this.puntosService.create(createPuntoDto);
   }
 
-  @Get()
-  findAll() {
-    return this.puntosService.findAll();
+  @Get('listar')
+  async findAll() {
+    return await this.puntosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.puntosService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.puntosService.findOne(+id);
   }
 
   @Patch(':id')
