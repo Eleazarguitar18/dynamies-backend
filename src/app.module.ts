@@ -8,6 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioModule } from './usuario/usuario.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/config/constants';
+import { LineasModule } from './lineas/lineas.module';
+import { RutasModule } from './rutas/rutas.module';
+import { PuntosModule } from './puntos/puntos.module';
 @Module({
   imports: [
     AuthModule,
@@ -42,6 +45,9 @@ import { jwtConstants } from './auth/config/constants';
       signOptions: { expiresIn: '60s' },
     }),
     UsuarioModule,
+    LineasModule,
+    RutasModule,
+    PuntosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
