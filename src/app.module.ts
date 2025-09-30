@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioModule } from './usuario/usuario.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/config/constants';
+// import { jwtConstants } from './auth/config/constants';
 import { LineasModule } from './lineas/lineas.module';
 import { RutasModule } from './rutas/rutas.module';
 import { PuntosModule } from './puntos/puntos.module';
@@ -26,6 +26,9 @@ import { PuntosModule } from './puntos/puntos.module';
         username: config.get<string>('DATABASE_USER'),
         password: config.get<string>('DATABASE_PASSWORD'),
         database: config.get<string>('DATABASE_NAME'),
+        ssl: {
+          rejectUnauthorized: false, // necesario para Neon, Render, etc.
+        },
         autoLoadEntities: true,
         synchronize: true, // solo desarrollo
       }),
@@ -38,7 +41,7 @@ import { PuntosModule } from './puntos/puntos.module';
     //   }),
     // }),
 
-     JwtModule.register({
+    JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
       // secret: jwtConstants.secret,
