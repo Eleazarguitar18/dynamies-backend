@@ -11,7 +11,7 @@ export class CreateRutaGeneralDto {
   @ApiProperty({ type: CreateLineaDto })
   @IsNotEmpty()
   ruta: CreateRutaDto;
-  @ApiProperty({ type: CreateLineaDto })
+  @ApiProperty({ type: CreatePuntoDto, isArray: true })
   @IsNotEmpty()
   puntos: CreatePuntoDto[];
 }
