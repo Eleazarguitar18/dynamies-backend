@@ -43,9 +43,10 @@ export class PuntosController {
       );
     }
   }
-  @Post('puntos-cercanos')
-  async puntosCercanos() {
-    return 'hola';
+  @Post('cercanos')
+  async tresPuntosMasCercanos(@Body() body: PuntoDto) {
+    // console.log('Punto de referencia:', body);
+    return await this.puntosService.tresPuntosMasCercanos(body);
   }
 
   @Get('listar')

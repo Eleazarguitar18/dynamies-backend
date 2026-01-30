@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePuntoDto } from './dto/create-punto.dto';
 import { UpdatePuntoDto } from './dto/update-punto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Punto } from './entities/punto.entity';
 import { PuntoDto } from './dto/punto-dto';
 
@@ -11,6 +11,7 @@ export class PuntosService {
   constructor(
     @InjectRepository(Punto)
     private puntosRepository: Repository<Punto>,
+    private dataSource: DataSource,
   ) {}
   async create(createPuntoDto: CreatePuntoDto) {
     const punto = this.puntosRepository.create(createPuntoDto);
@@ -54,7 +55,47 @@ export class PuntosService {
     return (value * Math.PI) / 180;
   }
 
-  puntos_cercanos() {}
+  async tresPuntosMasCercanos(puntoRef: PuntoDto): Promise<PuntoDto[]> {
+    console.log('Buscando puntos cercanos a:', puntoRef);
+
+    const query = `
+  SELECT nombre, tipo, latitud, longitud, 
+           id_user_create,
+           ROUND(
+             (ST_Distance(
+               ST_SetSRID(ST_MakePoint(longitud, latitud), 4326)::geography,
+               ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+             ) / 1000)::numeric, 2
+           ) AS distancia_al_siguiente
+    FROM punto
+    WHERE nombre != $3
+    ORDER BY distancia_al_siguiente
+    LIMIT 3;
+  `;
+
+    console.log('Ejecutando consulta para puntos cercanos...');
+
+    // CORRECCIÓN: primero longitud, luego latitud
+    const resultados = await this.dataSource.query(query, [
+      puntoRef.longitud, // $1 → lonRef
+      puntoRef.latitud, // $2 → latRef
+      puntoRef.nombre, // $3 → nombre del punto de referencia
+    ]);
+
+    console.log('Resultados obtenidos:', resultados);
+
+    // Mapear resultados a PuntoDto y agregar orden
+    return resultados.map((r, index) => ({
+      nombre: r.nombre,
+      tipo: r.tipo,
+      latitud: parseFloat(r.latitud),
+      longitud: parseFloat(r.longitud),
+      distancia_al_siguiente: parseFloat(r.distancia_al_siguiente),
+      orden: index + 1,
+      id_user_create: r.id_user_create,
+    }));
+  }
+
   async findAll() {
     const data = await this.puntosRepository.find();
     if (data.length === 0) {

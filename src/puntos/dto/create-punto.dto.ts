@@ -1,15 +1,15 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreatePuntoDto {
   @IsString()
   nombre: string;
   @IsString()
   tipo: string;
-  @IsString()
-  latitud: string;
-  @IsString()
-  longitud: string;
+  @IsNumber()
+  latitud: number;
+  @IsNumber()
+  longitud: number;
   estado: boolean = true;
   id_user_create: number;
   id_user_update?: number;
