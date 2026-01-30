@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
 } from '@nestjs/common';
 import { PuntosService } from './puntos.service';
 import { CreatePuntoDto } from './dto/create-punto.dto';
 import { UpdatePuntoDto } from './dto/update-punto.dto';
+import { PuntoDto } from './dto/punto-dto';
+import { DistanciaDto } from './dto/distancia-dto';
 
 @Controller('puntos')
 export class PuntosController {
@@ -18,6 +21,31 @@ export class PuntosController {
   @Post('create')
   async create(@Body() createPuntoDto: CreatePuntoDto) {
     return await this.puntosService.create(createPuntoDto);
+  }
+  @Post('distancia')
+  async distancia(@Body() body: DistanciaDto) {
+    try {
+      const { punto1, punto2 } = body;
+
+      console.log('Punto1:', punto1);
+      console.log('Punto2:', punto2);
+
+      return await this.puntosService.distancia_entre_puntos(punto1, punto2);
+    } catch (error) {
+      console.error('Error real de DB:', error);
+      throw new HttpException(
+        {
+          statusCode: 409,
+          message: 'Error de base de datos',
+          detail: error.message, // ahora verás el mensaje real
+        },
+        409,
+      );
+    }
+  }
+  @Post('puntos-cercanos')
+  async puntosCercanos() {
+    return 'hola';
   }
 
   @Get('listar')

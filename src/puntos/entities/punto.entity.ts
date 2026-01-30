@@ -6,18 +6,25 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 @Entity({ name: 'punto' })
 export class Punto {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ length: 100 })
   nombre: string;
+
   @Column({ length: 100 })
   tipo: string;
-  @Column({ length: 100 })
-  latitud: string;
-  @Column({ length: 100 })
-  longitud: string;
+
+  // Cambiamos a número para poder calcular distancias
+  @Column('double precision')
+  latitud: number;
+
+  @Column('double precision')
+  longitud: number;
+
   @Column({ default: true })
   estado: boolean;
 
