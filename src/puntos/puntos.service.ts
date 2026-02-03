@@ -59,18 +59,18 @@ export class PuntosService {
     console.log('Buscando puntos cercanos a:', puntoRef);
 
     const query = `
-  SELECT nombre, tipo, latitud, longitud, 
-           id_user_create,
-           ROUND(
-             (ST_Distance(
-               ST_SetSRID(ST_MakePoint(longitud, latitud), 4326)::geography,
-               ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-             ) / 1000)::numeric, 2
-           ) AS distancia_al_siguiente
-    FROM punto
-    WHERE nombre != $3
-    ORDER BY distancia_al_siguiente
-    LIMIT 3;
+      SELECT nombre, tipo, latitud, longitud, 
+              id_user_create,
+              ROUND(
+                (ST_Distance(
+                  ST_SetSRID(ST_MakePoint(longitud, latitud), 4326)::geography,
+                  ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+                ) / 1000)::numeric, 2
+              ) AS distancia_al_siguiente
+        FROM punto
+        WHERE nombre != $3
+        ORDER BY distancia_al_siguiente
+        LIMIT 3;
   `;
 
     console.log('Ejecutando consulta para puntos cercanos...');

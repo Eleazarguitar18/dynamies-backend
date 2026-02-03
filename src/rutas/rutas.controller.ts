@@ -12,6 +12,7 @@ import { CreateRutaDto } from './dto/create-ruta.dto';
 import { UpdateRutaDto } from './dto/update-ruta.dto';
 import { CreateRutaGeneralDto } from './dto/create-ruta-general';
 import { ApiBody } from '@nestjs/swagger';
+import { PuntoDto } from 'src/puntos/dto/punto-dto';
 
 @Controller('rutas')
 export class RutasController {
@@ -47,5 +48,12 @@ export class RutasController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.rutasService.remove(+id);
+  }
+
+  @Post('grafo') construirGrafo(
+    @Body('puntos') puntos: PuntoDto[],
+    @Body('rutaPuntos') rutaPuntos: any[],
+  ) {
+    return this.rutasService.construirGrafo(puntos, rutaPuntos);
   }
 }

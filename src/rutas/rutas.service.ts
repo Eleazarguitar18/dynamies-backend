@@ -13,6 +13,10 @@ import { PuntosService } from 'src/puntos/puntos.service';
 import { Punto } from 'src/puntos/entities/punto.entity';
 import { CreateRutaPuntosDto } from './dto/create-ruta-puntos-dto';
 import { RutaPunto } from './entities/ruta_puntos.entity';
+import { PuntoDto } from 'src/puntos/dto/punto-dto';
+import { GrafoDto } from './dto/grafo-dto';
+import { NodoDto } from './dto/nodo-dto';
+import { AristaDto } from './dto/arista-dto';
 
 @Injectable()
 export class RutasService {
@@ -82,5 +86,32 @@ export class RutasService {
 
   remove(id: number) {
     return `This action removes a #${id} ruta`;
+  }
+  construirGrafo(puntos: PuntoDto[], rutaPuntos: any[]): GrafoDto {
+    const nodos = new Map<number, NodoDto>();
+    const aristas = new Map<number, AristaDto[]>(); // Registrar nodos
+    puntos.forEach((p) => {
+      nodos.set(p.id, {
+        id: p.id,
+        nombre: p.nombre,
+        latitud: p.latitud,
+        longitud: p.longitud,
+      });
+    });
+    // Registrar aristas
+    rutaPuntos.forEach((rp) => {
+      const arista: AristaDto = {
+        origen: rp.origenId,
+        destino: rp.destinoId,
+        peso: rp.distancia_al_siguiente, // en metros
+        lineaId: rp.lineaId,
+        modo: 'minibus',
+      };
+      if (!aristas.has(rp.origenId)) {
+        aristas.set(rp.origenId, []);
+      }
+      aristas.get(rp.origenId)!.push(arista);
+    });
+    return { nodos, aristas };
   }
 }

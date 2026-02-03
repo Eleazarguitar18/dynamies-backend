@@ -2,6 +2,8 @@ import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
 
 export class PuntoDto {
+  @IsNumber()
+  id: number; // <-- agregado
   @IsString()
   nombre: string;
 
