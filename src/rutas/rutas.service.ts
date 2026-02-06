@@ -69,6 +69,7 @@ export class RutasService {
         ruta: ruta,
         punto: punto,
         orden: orden++,
+        distancia_siguiente: puntoDto.distancia_al_siguiente,
       };
 
       await this.create_ruta_puntos(rutaPuntosDto);

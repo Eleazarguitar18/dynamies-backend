@@ -21,4 +21,15 @@ export class RutaPunto extends BaseEntityAudit {
   punto: Punto;
   @Column()
   orden: number;
+  // NUEVA COLUMNA: Distancia al siguiente punto en metros
+  // Usamos 'decimal' o 'float' para precisión, con default 0
+  @Column({
+    name: 'distancia_siguiente',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true, // Esto es vital
+    default: 0, // Por si acaso no viene nada
+  })
+  distancia_siguiente: number;
 }

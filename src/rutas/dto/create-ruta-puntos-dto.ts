@@ -18,5 +18,9 @@ export class CreateRutaPuntosDto {
   punto: Punto;
   @IsNumber()
   orden: number;
+  // NUEVO CAMPO: Agrégalo aquí para que no te dé error al guardar
+  @IsOptional()
+  @IsNumber()
+  distancia_siguiente?: number;
 }
 export class UpdateCustomerDto extends PartialType(CreateRutaPuntosDto) {}
