@@ -119,4 +119,19 @@ export class PuntosService {
   remove(id: number) {
     return `This action removes a #${id} punto`;
   }
+
+  async buscarCercano(lat: number, lng: number): Promise<PuntoDto> {
+    const resultado = await this.puntosRepository.query(
+      `
+      SELECT id, nombre, latitud, longitud, tipo, orden, id_user_create
+      FROM punto
+      ORDER BY ST_SetSRID(ST_MakePoint(longitud, latitud), 4326)::geography 
+               <-> ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+      LIMIT 1;
+    `,
+      [lng, lat],
+    );
+
+    return resultado[0]; // Retorna el punto más cercano o undefined
+  }
 }

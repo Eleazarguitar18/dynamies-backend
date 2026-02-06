@@ -25,6 +25,9 @@ export class Punto {
   @Column('double precision')
   longitud: number;
 
+  @Column({ type: 'int', nullable: true }) // Asegúrate de que esté aquí
+  orden: number;
+
   @Column({ default: true })
   estado: boolean;
 

@@ -56,4 +56,22 @@ export class RutasController {
   ) {
     return this.rutasService.construirGrafo(puntos, rutaPuntos);
   }
+  @Post('calcular')
+  async calcular(@Body() body: any) {
+    // return 'hola';
+    // Asegúrate de llamar al service y retornar su promesa
+    console.log(
+      body.origenLat,
+      body.origenLng,
+      body.destinoLat,
+      body.destinoLng,
+    );
+    return await this.rutasService.obtenerRutaOptima(
+      body.origenLat,
+      body.origenLng,
+      body.destinoLat,
+      body.destinoLng,
+    );
+  }
+  // rutas.controller.ts
 }
