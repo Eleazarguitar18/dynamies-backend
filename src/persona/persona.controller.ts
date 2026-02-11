@@ -12,7 +12,7 @@ import {
 import { PersonaService } from './persona.service';
 import { CreatePersonaDto } from './dto/create-persona.dto';
 import { UpdatePersonaDto } from './dto/update-persona.dto';
-import { AuthGuard } from 'src/auth/config/auth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('persona')
 export class PersonaController {

@@ -38,10 +38,15 @@ export class UsuarioService {
     // if(ciUnique){
     //   throw new UnauthorizedException('El ci ya se encuentra registrado');
     // }
+   // 1. Creas la persona (esto ya lo tienes y está bien)
     const persona = await this.personaService.create(createAuthDto);
 
-    // generaciond de contraseña
+    // 2. Generación de contraseña hash
     const password_hash = await this.encriptar_password(createAuthDto.password);
+
+    // 3. Definir el ID del Rol
+    // Si el DTO trae un id_role úsalo, si no, asígnale el 3 (que según nuestro seed es 'user')
+    const rolId = createAuthDto.id_role || 3;
     const userDto = {
       name:
         createAuthDto.nombres +
@@ -53,11 +58,15 @@ export class UsuarioService {
       password: password_hash,
       estado: createAuthDto.estado,
       persona: persona,
+      // 4. IMPORTANTE: Agregamos la relación al objeto
+      role: { id: rolId }
     };
    
 
     const user = this.userRepository.create(userDto);
     const data = await this.userRepository.save(user);
+    // Opcional: Eliminar el password de la respuesta por seguridad
+    // delete (data as any).password; // TypeScript ya no se queja
     return data;
   }
 

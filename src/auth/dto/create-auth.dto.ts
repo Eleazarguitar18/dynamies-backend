@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 export class CreateAuthDto {
   @IsString()
   @IsOptional()
@@ -30,4 +30,8 @@ export class CreateAuthDto {
   genero: string;
   // @IsOptional()
   // persona?: Persona;
+
+  @IsOptional()
+  @IsNumber()
+  id_role?: number;
 }

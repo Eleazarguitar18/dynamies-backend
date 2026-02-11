@@ -5,10 +5,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../config/constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from './auth_public';
+import { IS_PUBLIC_KEY } from '../decorators/auth_public.decorator';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -37,6 +37,11 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_SECRET'), // ✅ secreto desde .env
       });
+
+      // Verificamos que el payload tenga lo que necesitamos
+      if (!payload || !payload.roleName) {
+        throw new UnauthorizedException('Token no contiene información de rol');
+      }
       // const payload = await this.jwtService.verifyAsync(
       //   token,
       //   {
