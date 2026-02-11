@@ -9,11 +9,14 @@ import {
   Request,
   ParseIntPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { GrupoService } from './grupo.service';
 import { CreateGrupoDto } from './dto/create-grupo.dto';
 import { UpdateGrupoDto } from './dto/update-grupo.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 @ApiTags('grupo')
 @Controller('grupo')
 export class GrupoController {
@@ -23,6 +26,8 @@ export class GrupoController {
   @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard) // Actívalo cuando quieras proteger la ruta
   @ApiOperation({ summary: 'Crea un nuevo grupo de campamento' })
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   async create(@Body() createGrupoDto: CreateGrupoDto, @Request() req) {
     // Si el JWT está activo, sacamos el ID del usuario de la petición
     // Si no, mandamos un 1 por defecto mientras pruebas
