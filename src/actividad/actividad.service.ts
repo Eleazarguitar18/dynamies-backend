@@ -28,7 +28,7 @@ export class ActividadService {
   async sanciones() {
   return await this.actividadRepo.find({
     where: {
-      puntos_base: LessThan(0), // 👈 Esto genera el SQL: "puntos_base < 0"
+      categoria: 'sancion', // Esto genera el SQL: "categoria = 'sancion'"
       estado: true,
     },
     order: { 
